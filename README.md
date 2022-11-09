@@ -63,10 +63,8 @@ Here is an example of the JWT payload.
 }
 ```
 
-The `iss` is the issuer of the token. In this case the TRA and version 1.
-
-The `key` is the secret (base64 decoded) to decrypt the personal data of the user.
-
+The `iss` is the issuer of the token. In this case the TRA and version 1.<br/>
+The `key` is the secret (base64 encoded) to decrypt the personal data of the user.<br/>
 The `trId` is the unique id of the test result.
 
 
