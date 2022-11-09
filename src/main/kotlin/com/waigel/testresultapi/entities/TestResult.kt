@@ -28,7 +28,7 @@ class TestResult(
     val testPerformedAt: LocalDateTime = LocalDateTime.now(),
 
     @OneToOne
-    val personalData: PersonalData
+    var personalData: PersonalData
 ) : AuditModel() {
     companion object {
         fun fromRequest(request: SubmitTestResultDTO, tenant: Tenant, personalData: PersonalData): TestResult {

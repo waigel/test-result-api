@@ -32,8 +32,5 @@ class SubmitTestResultController(private val testResultService: TestResultServic
     ): AccessTokenCreationResponseDTO {
         logger.info("[${submitTestResultRequest.testId}] Submit test result for tenant $tenant")
         return testResultService.submitTestResult(tenant, submitTestResultRequest)
-
     }
-
-
 }

@@ -1,9 +1,7 @@
 package com.waigel.testresultapi.entities
 
 import com.waigel.testresultapi.models.UserDetailsDTO
-import com.waigel.testresultapi.utils.CryptoHelper
 import java.util.UUID
-import javax.crypto.SecretKey
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -26,8 +24,8 @@ class PersonalData(
 ) : AuditModel() {
 
     companion object {
-        fun encryptAndBuildFromRequest(userDetailsDTO: UserDetailsDTO, encryptionKey: SecretKey): PersonalData {
-            val personalData = PersonalData(
+        fun fromRequest(userDetailsDTO: UserDetailsDTO): PersonalData {
+            return PersonalData(
                 firstName = userDetailsDTO.firstName,
                 lastName = userDetailsDTO.lastName,
                 birthDate = userDetailsDTO.birthDate.toString(),
@@ -37,7 +35,6 @@ class PersonalData(
                 city = userDetailsDTO.city,
                 country = userDetailsDTO.country,
             )
-            return CryptoHelper.encryptUserDetails(personalData, encryptionKey)
         }
     }
 }

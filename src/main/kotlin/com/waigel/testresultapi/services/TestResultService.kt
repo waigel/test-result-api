@@ -2,6 +2,7 @@ package com.waigel.testresultapi.services
 
 import com.waigel.testresultapi.entities.PersonalData
 import com.waigel.testresultapi.entities.TestResult
+import com.waigel.testresultapi.events.OnTestSubmitted
 import com.waigel.testresultapi.models.AccessTokenCreationResponseDTO
 import com.waigel.testresultapi.models.SubmitTestResultDTO
 import com.waigel.testresultapi.repositories.PersonalDataRepository
@@ -36,15 +37,26 @@ class TestResultService(
         logger.info("[${request.testId}] Transmission status is $transmissionStatus")
         val encryptionKey = CryptoHelper.generateEncryptionKey()
 
-        //ToDo: send request to cwa-api
-        val personalData =
-            personalDataRepository.save(PersonalData.encryptAndBuildFromRequest(request.userDetails, encryptionKey))
+        val personalData = PersonalData.fromRequest(request.userDetails);
+        val encryptedPersonalData =
+            personalDataRepository.save(CryptoHelper.encryptUserDetails(personalData, encryptionKey))
 
         val testResult = testResultRepository.save(
             TestResult.fromRequest(
                 request,
                 tenant,
-                personalData
+                encryptedPersonalData
+            )
+        )
+
+        //send OnTestSubmitted to trigger PDF generation and cwa transmission if necessary
+        applicationEventPublisher.publishEvent(
+            OnTestSubmitted(
+                source = this,
+                testResult = testResult.apply {
+                    this.personalData = personalData //replace encrypted personal data with decrypted personal data
+                },
+                tenant = tenant,
             )
         )
         //create accessToken for testResult
