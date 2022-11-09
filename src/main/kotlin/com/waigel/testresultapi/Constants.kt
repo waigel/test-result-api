@@ -6,7 +6,7 @@ class Constants {
         const val API_BASE_PATH = "/api/$API_VERSION"
 
         const val API_TENANT_COMPANY_CONTROLLER_PATH = "$API_BASE_PATH/tenant-company"
-        const val API_TENANT_CONTROLLER_PATH = "$API_BASE_PATH/company/{companyId}/tenant"
+        const val API_TENANT_CONTROLLER_PATH = "$API_BASE_PATH/company/{companyId}/tenants"
 
 
         const val API_TCA_BASE_PATH = "$API_BASE_PATH/tca"

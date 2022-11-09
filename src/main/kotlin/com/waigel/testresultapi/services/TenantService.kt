@@ -24,33 +24,59 @@ class TenantService(
         }
     }
 
-
     /**
      * Delete a Tenant if exist
      * @param tenantId The id of the tenant to delete
      */
     fun delete(tenantId: String) {
         val tenant = getById(UUID.fromString(tenantId))
-       this.delete(tenant)
+        this.delete(tenant)
     }
 
     /**
      * Delete a Tenant if exist
      * @param tenant The tenant to delete
      */
-    fun delete(tenant: Tenant){
+    fun delete(tenant: Tenant) {
         logger.info("Delete tenant with id ${tenant.id}")
         tenantRepository.delete(tenant)
     }
 
     /**
      * Creates a new Tenant.
+     * @param createTenantRequest The request to create a new tenant
+     * @param companyId The id of the company to which the tenant belongs
+     * @return The created tenant
      */
-    fun create(createTenantRequest: CreateTenantRequestDTO, companyId: UUID) {
+    fun create(createTenantRequest: CreateTenantRequestDTO, companyId: UUID): Tenant {
         val tenantCompany = tenantCompanyService.getById(companyId)
         logger.info("Create new tenant, request = $createTenantRequest")
 
         val location = tenantLocationService.create(createTenantRequest)
-        tenantRepository.save(Tenant.from(tenantCompany, location))
+        return tenantRepository.save(Tenant.from(tenantCompany, location))
+    }
+
+    /**
+     * Find all tenants by companyId - empty list if no result found
+     * @param companyId The id of the company to which the tenant belongs
+     * @return A list of tenants
+     */
+    fun getAllByCompanyId(companyId: UUID): List<Tenant> {
+        return tenantRepository.findAllByCompanyId(companyId)
+    }
+
+    /**
+     * Find tenant by companyId and tenantId - throw NotFoundException if no tenant found
+     * @param tenantId The id of the tenant to find
+     * @param companyId The id of the company to find
+     * @return The tenant found
+     * @throws NotFoundException if no tenant found
+     */
+    fun getByIdAndCompanyId(tenantId: UUID, companyId: UUID): Tenant {
+        return tenantRepository.findByIdAndCompanyId(tenantId, companyId)
+            .orElseThrow {
+                logger.info("Tenant with id $tenantId not found")
+                throw NotFoundException(Message.RESOURCE_NOT_FOUND)
+            }
     }
 }

@@ -1,10 +1,12 @@
 package com.waigel.testresultapi.entities
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.waigel.testresultapi.models.CreateTenantRequestDTO
 import com.waigel.testresultapi.models.TenantLocationRequest
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.OneToOne
 
@@ -23,10 +25,12 @@ class TenantLocation(
 
     val logoUrl: String? = null,
 
-    @OneToOne
-    val tenant: Tenant? = null,
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    val tenant: Tenant? = null
 
     ) : AuditModel() {
+
     companion object {
         fun from(createTenantRequestDTO: CreateTenantRequestDTO): TenantLocation {
             return TenantLocation(

@@ -1,6 +1,7 @@
 package com.waigel.testresultapi.controllers
 
 import com.waigel.testresultapi.Constants
+import com.waigel.testresultapi.entities.TenantCompany
 import com.waigel.testresultapi.models.TenantCompanyRequestDTO
 import com.waigel.testresultapi.services.TenantCompanyService
 import io.swagger.v3.oas.annotations.Operation
@@ -28,9 +29,9 @@ class TenantCompanyController(
     @Operation(summary = "Create a new tenant company")
     fun createTenantCompany(
         @Valid @RequestBody createTenantCompanyRequest: TenantCompanyRequestDTO
-    ) {
+    ): TenantCompany {
         logger.info("Create new tenant company")
-        tenantCompanyService.create(createTenantCompanyRequest)
+        return tenantCompanyService.create(createTenantCompanyRequest)
     }
 
     @PatchMapping(value = ["/{tenantCompanyId}"])
@@ -38,9 +39,9 @@ class TenantCompanyController(
     fun updateTenantCompany(
         @PathVariable tenantCompanyId: UUID,
         @Valid @RequestBody tenantCompanyRequest: TenantCompanyRequestDTO
-    ) {
+    ): TenantCompany {
         logger.info("Update tenant company with id $tenantCompanyId")
-        tenantCompanyService.update(tenantCompanyId, tenantCompanyRequest)
+        return tenantCompanyService.update(tenantCompanyId, tenantCompanyRequest)
     }
 
     @DeleteMapping(value = ["/{id}"])
