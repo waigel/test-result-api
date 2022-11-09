@@ -17,7 +17,7 @@ class TenantService(
 ) {
     private val logger = LoggerFactory.getLogger(TenantService::class.java)
 
-    private fun getById(id: UUID): Tenant {
+    fun getById(id: UUID): Tenant {
         return tenantRepository.findById(id).orElseThrow {
             logger.info("Tenant with id $id not found")
             throw NotFoundException(Message.RESOURCE_NOT_FOUND)

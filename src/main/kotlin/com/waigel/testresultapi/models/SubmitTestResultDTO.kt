@@ -1,13 +1,13 @@
 package com.waigel.testresultapi.models
 
-import org.springframework.lang.Nullable
-import java.time.LocalDate
+import com.waigel.testresultapi.models.enums.CWATransmission
+import com.waigel.testresultapi.models.enums.TestResultType
 
 class SubmitTestResultDTO(
     val testId: String,
-    val testResult: String,
-    val birthDate: LocalDate,
-    @field:Nullable
-    val cwaUserDetails: CoronaWarnAppUserDetailsDTO?
+    val testResult: TestResultType,
+
+    val userDetails: UserDetailsDTO,
+    val cwaTransmission: CWATransmission
 ) {
 }

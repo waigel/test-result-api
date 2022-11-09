@@ -52,6 +52,7 @@ dependencies {
 
     // keycloak
     implementation("org.keycloak:keycloak-spring-boot-starter:19.0.3")
+    implementation("com.auth0:java-jwt:4.2.1")
 
     //utils
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-properties:1.4.0")

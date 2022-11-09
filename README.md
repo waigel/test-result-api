@@ -46,11 +46,26 @@ The clientId and clientSecret is exchanged via Keycloak.
 # Secure storage
 We never store personal information of the patient in plain format in this database or any logs. 
 
-First we generate a sha256 hash from the birthdate and encrypt this hash with a AES256 encryption, the secret to decrypt this information are included in the JWT token (RFC 7519) as payload.
-So we are only able to decrypt the birthdate hash if the user provide us the accessToken.
-The same methode is used for all other personal user information.
+First we encrypt all personal user information with AES256 encryption, the secret to decrypt this information are included in the JWT token (RFC 7519) as payload.
+So we are only able to decrypt this information with the secret key, which is only known by the TCA and not 
+stored in the TRA database or logs.
 
-We follow the principle user has the own control of the data at any time.
+We follow the principle: User should have their own control of the data at any time.
+
+# JWT Token
+
+Here is an example of the JWT payload.
+```
+{
+  "iss": "TRA/v1",
+  "key": "MzIyY2YzMjhlYTg3MzMxNGM0OGU1ZTc1NGVkMDgxNzQ=",
+  "trId": "8adc64d5-200b-49ff-b0f2-1635cbca6e1e"
+}
+```
+
+The `iss` is the issuer of the token. In this case the TRA and version 1.
+The `key` is the secret (base64 decoded) to decrypt the personal data of the user.
+The `trId` is the unique id of the test result.
 
 
 # Patient access
