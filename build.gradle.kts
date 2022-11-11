@@ -56,6 +56,9 @@ dependencies {
 
     //utils
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-properties:1.4.0")
+
+    //pdf
+    implementation("com.itextpdf:itextpdf:5.5.13.3")
 }
 allOpen {
     annotations("javax.persistence.Entity", "javax.persistence.MappedSuperclass", "javax.persistence.Embedabble")

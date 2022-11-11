@@ -22,6 +22,19 @@ class PersonalData(
     var city: String,
     var country: String,
 ) : AuditModel() {
+    fun copy(): PersonalData {
+        return PersonalData(
+            id = id,
+            firstName = firstName,
+            lastName = lastName,
+            birthDate = birthDate,
+            street = street,
+            houseNumber = houseNumber,
+            zipcode = zipcode,
+            city = city,
+            country = country,
+        )
+    }
 
     companion object {
         fun fromRequest(userDetailsDTO: UserDetailsDTO): PersonalData {

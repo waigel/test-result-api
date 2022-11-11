@@ -1,6 +1,6 @@
 package com.waigel.testresultapi.entities
 
-import com.waigel.testresultapi.models.SubmitTestResultDTO
+import com.waigel.testresultapi.models.SubmitTestRequestDTO
 import com.waigel.testresultapi.models.enums.CWATransmission
 import com.waigel.testresultapi.models.enums.TestResultType
 import java.time.LocalDateTime
@@ -26,12 +26,24 @@ class TestResult(
     @Enumerated(EnumType.STRING)
     val testResult: TestResultType = TestResultType.INVALID,
     val testPerformedAt: LocalDateTime = LocalDateTime.now(),
+    val testName: String = "",
 
     @OneToOne
     var personalData: PersonalData
 ) : AuditModel() {
+    fun copy(personalData: PersonalData): TestResult {
+        return TestResult(
+            id = id,
+            testId = testId,
+            cwaTransmissionType = cwaTransmissionType,
+            testResult = testResult,
+            testPerformedAt = testPerformedAt,
+            personalData = personalData
+        )
+    }
+
     companion object {
-        fun fromRequest(request: SubmitTestResultDTO, tenant: Tenant, personalData: PersonalData): TestResult {
+        fun fromRequest(request: SubmitTestRequestDTO, tenant: Tenant, personalData: PersonalData): TestResult {
             return TestResult(
                 testId = request.testId,
                 cwaTransmissionType = request.cwaTransmission,

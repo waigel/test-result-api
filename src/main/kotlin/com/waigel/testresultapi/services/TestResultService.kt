@@ -4,7 +4,7 @@ import com.waigel.testresultapi.entities.PersonalData
 import com.waigel.testresultapi.entities.TestResult
 import com.waigel.testresultapi.events.OnTestSubmitted
 import com.waigel.testresultapi.models.AccessTokenCreationResponseDTO
-import com.waigel.testresultapi.models.SubmitTestResultDTO
+import com.waigel.testresultapi.models.SubmitTestRequestDTO
 import com.waigel.testresultapi.repositories.PersonalDataRepository
 import com.waigel.testresultapi.repositories.TestResultRepository
 import com.waigel.testresultapi.utils.CryptoHelper
@@ -30,7 +30,7 @@ class TestResultService(
      * @param tenantId the tenant id
      */
     @Transactional
-    fun submitTestResult(tenantId: UUID, request: SubmitTestResultDTO): AccessTokenCreationResponseDTO {
+    fun submitTestResult(tenantId: UUID, request: SubmitTestRequestDTO): AccessTokenCreationResponseDTO {
         logger.info("[${request.testId}] Submit test result for tenant $tenantId")
         val tenant = tenantService.getById(tenantId)
         val transmissionStatus = request.cwaTransmission
@@ -38,14 +38,14 @@ class TestResultService(
         val encryptionKey = CryptoHelper.generateEncryptionKey()
 
         val personalData = PersonalData.fromRequest(request.userDetails);
-        val encryptedPersonalData =
-            personalDataRepository.save(CryptoHelper.encryptUserDetails(personalData, encryptionKey))
+        val copyOfUnencryptedPersonalData = personalData.copy()
 
+        CryptoHelper.encryptUserDetails(personalData, encryptionKey)
         val testResult = testResultRepository.save(
             TestResult.fromRequest(
                 request,
                 tenant,
-                encryptedPersonalData
+                personalDataRepository.save(personalData)
             )
         )
 
@@ -53,13 +53,11 @@ class TestResultService(
         applicationEventPublisher.publishEvent(
             OnTestSubmitted(
                 source = this,
-                testResult = testResult.apply {
-                    this.personalData = personalData //replace encrypted personal data with decrypted personal data
-                },
+                testResult = testResult.copy(copyOfUnencryptedPersonalData), // replace encrypted personal data with unencrypted personal data
                 tenant = tenant,
             )
         )
-        //create accessToken for testResult
+
         val accessToken = jwtService.createAccessToken(encryptionKey, testResult.id)
         return AccessTokenCreationResponseDTO(accessToken)
     }
