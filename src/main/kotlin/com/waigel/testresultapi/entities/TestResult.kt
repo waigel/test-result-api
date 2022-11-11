@@ -29,7 +29,11 @@ class TestResult(
     val testName: String = "",
 
     @OneToOne
-    var personalData: PersonalData
+    var personalData: PersonalData,
+
+    @OneToOne(mappedBy = "testResult")
+    var uploadedDocument: UploadedDocument? = null
+
 ) : AuditModel() {
     fun copy(personalData: PersonalData): TestResult {
         return TestResult(

@@ -3,6 +3,7 @@ package com.waigel.testresultapi.services
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.waigel.testresultapi.components.JwtCertificateLoader
+import com.waigel.testresultapi.models.JwtPayload
 import org.springframework.stereotype.Service
 import java.util.Base64
 import java.util.UUID
@@ -27,6 +28,19 @@ class JwtService(
             .withClaim("trId", testResultId.toString())
             .withClaim("key", Base64.getEncoder().encodeToString(encryptionKey.encoded))
             .withIssuer("TRA/v1")
+            .withExpiresAt(java.util.Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
             .sign(algorithm);
+    }
+
+    /**
+     * Verify a JWT token or throw an exception
+     */
+    fun validateAccessToken(token: String): JwtPayload {
+        val algorithm: Algorithm = Algorithm.RSA256(jwt.getPublic(), jwt.getPrivate())
+        val verifier = JWT.require(algorithm)
+            .withIssuer("TRA/v1")
+            .build()
+        val decodedPayload = verifier.verify(token)
+        return JwtPayload(decodedPayload.getClaim("key").asString(), decodedPayload.getClaim("trId").asString())
     }
 }

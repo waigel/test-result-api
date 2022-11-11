@@ -1,5 +1,6 @@
 package com.waigel.testresultapi.security
 
+import com.waigel.testresultapi.Constants
 import org.keycloak.adapters.KeycloakConfigResolver
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents
@@ -37,6 +38,8 @@ class SecurityConfig : KeycloakWebSecurityConfigurerAdapter() {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().cors().and().csrf().disable().authorizeRequests()
             .antMatchers("/actuator/*").permitAll() // limit access over ingress controller
+            .antMatchers(Constants.API_PUBLIC_DECRYPT_DATA_PATH).permitAll()
+            .antMatchers(Constants.API_PUBLIC_DECRYPT_DATA_PATH + "/certificate").permitAll()
             .antMatchers(
                 "/swagger-ui.html", "/swagger-resources/**", "/v3/api-docs/**", "/webjars/**", "/swagger-ui/**"
             ).permitAll()

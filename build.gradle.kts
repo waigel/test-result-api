@@ -59,6 +59,7 @@ dependencies {
 
     //pdf
     implementation("com.itextpdf:itextpdf:5.5.13.3")
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.300")
 }
 allOpen {
     annotations("javax.persistence.Entity", "javax.persistence.MappedSuperclass", "javax.persistence.Embedabble")

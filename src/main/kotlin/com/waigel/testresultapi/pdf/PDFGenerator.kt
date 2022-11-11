@@ -30,5 +30,4 @@ class PDFGenerator(
         document.open();
         return InternalDocument(document, output, tenant)
     }
-
 }

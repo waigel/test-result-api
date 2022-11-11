@@ -1,6 +1,8 @@
 package com.waigel.testresultapi.utils
 
+import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.security.GeneralSecurityException
 import java.security.NoSuchAlgorithmException
@@ -70,7 +72,7 @@ object AesGcmCryptoSystem {
 
     @Throws(GeneralSecurityException::class)
     fun encryptString(plainText: String, secret: SecretKey): String {
-        val encrypted =  encrypt(plainText.toByteArray(StandardCharsets.ISO_8859_1), secret)
+        val encrypted = encrypt(plainText.toByteArray(StandardCharsets.ISO_8859_1), secret)
         return java.util.Base64.getEncoder().encodeToString(encrypted)
     }
 
@@ -92,5 +94,33 @@ object AesGcmCryptoSystem {
         val cipherText = ByteArray(bb.remaining())
         bb[cipherText]
         return decryptWithGivenIV(cipherText, secret, iv)
+    }
+
+    /**
+     * Takes a string and decrypts it's ISO-8859-15 Content
+     */
+    fun decryptString(value: String, key: SecretKey): String {
+        val decoded = java.util.Base64.getDecoder().decode(value)
+        return String(decrypt(decoded, key), Charset.forName("ISO-8859-15"))
+    }
+
+    /**
+     * Encrypt file using AES-GCM
+     */
+    fun encryptFile(document: ByteArrayOutputStream, encryptionKey: SecretKey): ByteArrayOutputStream {
+        val encrypted = encrypt(document.toByteArray(), encryptionKey)
+        val encryptedDocument = ByteArrayOutputStream()
+        encryptedDocument.write(encrypted)
+        return encryptedDocument
+    }
+
+    /**
+     * Decrypt file using AES-GCM
+     */
+    fun decryptFile(document: ByteArrayOutputStream, encryptionKey: SecretKey): ByteArrayOutputStream {
+        val decrypted = decrypt(document.toByteArray(), encryptionKey)
+        val decryptedDocument = ByteArrayOutputStream()
+        decryptedDocument.write(decrypted)
+        return decryptedDocument
     }
 }
