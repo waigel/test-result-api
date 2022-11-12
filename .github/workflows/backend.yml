@@ -67,7 +67,7 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - name: Build Docker image
-        run: docker build . --tag testperfect.azurecr.io/testperfect/tra-api:${SHORT_SHA} --build-arg=GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg=GIT_COMMIT=${SHORT_SHA}
+        run: docker build . -f backend.Dockerfile --tag testperfect.azurecr.io/testperfect/tra-api:${SHORT_SHA} --build-arg=GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg=GIT_COMMIT=${SHORT_SHA}
       - name: Push Docker image
         run: docker push testperfect.azurecr.io/testperfect/tra-api:${SHORT_SHA}
   cleanup:

@@ -6,8 +6,22 @@ on:
   pull_request:
 
 jobs:
+  changes:
+    name: "Check for frontend changes"
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2.4.2
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
   frontend-docker:
     runs-on: ubuntu-latest
+    if: steps.changes.outputs.frontend == 'true'
     steps:
       - name: Add SHORT_SHA env property with commit short sha
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
