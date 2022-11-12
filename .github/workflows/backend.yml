@@ -70,11 +70,41 @@ jobs:
         run: docker build . -f backend.Dockerfile --tag testperfect.azurecr.io/testperfect/tra-api:${SHORT_SHA} --build-arg=GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg=GIT_COMMIT=${SHORT_SHA}
       - name: Push Docker image
         run: docker push testperfect.azurecr.io/testperfect/tra-api:${SHORT_SHA}
+  backend-deploy:
+    name: Backend deploy 🚀
+    needs: [ backend-docker ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+      - uses: actions/checkout@v3
+        with:
+          repository: testperfect/deployment
+          ref: 'main'
+          token:  ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+      - name: Setup GIT config
+        run: |
+          git config user.name "Klexy"
+          git config user.email "klexy@klexhub.com"
+      - name: Update .version file
+        run:  rm ./projects/dev/tra-api/.version && echo "export VERSION=${SHORT_SHA}" > ./projects/dev/tra-api/.version
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.KLEXY_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.KLEXY_GPG_PRIVATE_KEY_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+      - name: Commit version change
+        run: |
+          git add ./projects/dev/api/.version
+          git commit -s -S -m ":rocket: [api] Update version to ${SHORT_SHA}" -m "Co-authored-by: ${{ github.event.pusher.name }} <${{ github.event.pusher.email }}>"
+          git push 
   cleanup:
     name: Cleanup 🧹
     runs-on: ubuntu-latest
     if: always()
-    needs: [ backend-docker, backend-build]
+    needs: [ backend-docker, backend-deploy, backend-build]
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
