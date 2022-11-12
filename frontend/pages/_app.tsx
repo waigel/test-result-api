@@ -20,7 +20,9 @@ const App = ({Component, pageProps}: AppProps) => {
         forceLanguage={activeLocale || "de-DE"}
         apiKey={process.env.NEXT_PUBLIC_TOLGEE_API_KEY}
         apiUrl={process.env.NEXT_PUBLIC_TOLGEE_API_URL}
-    >
+        staticData={{
+            "de-DE": () => import('../i18n/de-DE.json')
+        }}>
         <Component {...pageProps} />
     </TolgeeProvider>
 }
