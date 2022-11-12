@@ -137,6 +137,31 @@ has an associated billing account.
 
 If you are interested in the cwa-api, please contact us. Mail: johannes@waigel.me
 
+# Webhook
+
+The webhook is triggered by each request to decrypt the test result. The webhook body
+contains the tenantId, date and some user information like ip address and user agent.
+
+The TCAs can use this information to log the test result transmission in their system.
+
+## Implementation
+The TRA send a simple `POST` request to the webhook url with the following body:
+```
+{
+  "tenantId": "b20f1c5f-2623-4e37-b630-25b401345161",
+  "testId": "e43b1d61-8d2b-4694-ad1e-fbd885d8b88c",
+  "date": "2022-11-12T17:50:58.666442885",
+  "ipAddress": "0:0:0:0:0:0:0:1",
+  "browserAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36"
+}
+```
+The TCAs should respond with a `200` status code, otherwise the TRA will retry the webhook call after 5 minutes.
+
+## Security
+
+The webhook body is signed with a HMAC-SHA256 signature. The TCAs can verify the signature with the secret key.
+If the signature is invalid, the TRA should not process the webhook call.
+
 
 # NextJs Frontend
 

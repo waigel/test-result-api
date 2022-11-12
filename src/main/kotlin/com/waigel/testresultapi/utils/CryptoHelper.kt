@@ -69,4 +69,8 @@ object CryptoHelper {
     fun decryptFile(document: ByteArray, secretKey: SecretKey): ByteArray {
         return AesGcmCryptoSystem.decrypt(document, secretKey)
     }
+
+    fun hmacSha256(secret: String, payload: String): String {
+        return HmacSha256CryptoSystem.hmacSha256(secret, payload)
+    }
 }

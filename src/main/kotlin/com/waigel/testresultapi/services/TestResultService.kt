@@ -4,6 +4,7 @@ import com.waigel.testresultapi.entities.CwaTransmissionDetails
 import com.waigel.testresultapi.entities.PersonalData
 import com.waigel.testresultapi.entities.TestResult
 import com.waigel.testresultapi.events.OnTestSubmitted
+import com.waigel.testresultapi.events.OnUserAcceptTestExecution
 import com.waigel.testresultapi.exceptions.Message
 import com.waigel.testresultapi.exceptions.NotFoundException
 import com.waigel.testresultapi.exceptions.PermissionDeniedException
@@ -17,7 +18,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
+import javax.servlet.http.HttpServletRequest
 import javax.transaction.Transactional
 
 @Service
@@ -88,7 +91,7 @@ class TestResultService(
     /**
      * Get test result by id and validate birthdate
      */
-    fun getTestResult(decodedPayload: JwtPayload, birthdate: LocalDate): TestResult {
+    fun getTestResult(decodedPayload: JwtPayload, birthdate: LocalDate, request: HttpServletRequest): TestResult {
         val testResult = this.getById(UUID.fromString(decodedPayload.trId))
         val secretKey = CryptoHelper.getSecretKeyFromBase64String(decodedPayload.key)
         val decryptedPersonalData = CryptoHelper.decryptUserDetails(testResult.personalData, secretKey)
@@ -96,11 +99,33 @@ class TestResultService(
         if (decryptedPersonalData.birthDate != birthdate.format(PersonalData.BIRTH_DATE_FORMAT)) {
             throw PermissionDeniedException(Message.BIRTHDATE_WRONG)
         }
+
+        //user has decrypted the test result, so we can trigger the webhook event
+        try {
+            applicationEventPublisher.publishEvent(
+                OnUserAcceptTestExecution
+                    (
+                    source = this,
+                    tenant = testResult.tenant!!,
+                    testResult = testResult,
+                    date = LocalDateTime.now(),
+                    ipAddress = request.remoteAddr,
+                    browserAgent = request.getHeader("User-Agent")
+                )
+            )
+        } catch (e: Exception) {
+            logger.info("Error while publishing event OnUserAcceptTestExecution")
+        }
+
         return testResult
     }
 
-    fun getDecryptedCertificate(decodedPayload: JwtPayload, birthDate: LocalDate): ByteArray {
-        val testResult = this.getTestResult(decodedPayload, birthDate)
+    fun getDecryptedCertificate(
+        decodedPayload: JwtPayload,
+        birthDate: LocalDate,
+        request: HttpServletRequest
+    ): ByteArray {
+        val testResult = this.getTestResult(decodedPayload, birthDate, request)
         val secretKey = CryptoHelper.getSecretKeyFromBase64String(decodedPayload.key)
         if (testResult.uploadedDocument == null) {
             throw NotFoundException(Message.RESOURCE_NOT_FOUND)

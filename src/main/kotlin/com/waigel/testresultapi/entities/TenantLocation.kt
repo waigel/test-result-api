@@ -8,6 +8,7 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
+import javax.persistence.OneToMany
 import javax.persistence.OneToOne
 
 @Entity(name = "tenant_location")
@@ -27,7 +28,7 @@ class TenantLocation(
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
-    val tenant: Tenant? = null
+    val tenant: Tenant? = null,
 
     ) : AuditModel() {
 

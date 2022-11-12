@@ -4,6 +4,7 @@ import com.waigel.testresultapi.events.OnTestSubmitted
 import com.waigel.testresultapi.services.DocumentUploadService
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import java.io.FileOutputStream
 
@@ -15,6 +16,7 @@ class PdfEventListener(
 
     private val logger = LoggerFactory.getLogger(PdfEventListener::class.java)
 
+    @Async
     @EventListener(OnTestSubmitted::class)
     fun handleTestSubmittedEvent(event: OnTestSubmitted) {
         logger.info("Received event: ${event.javaClass.simpleName}")

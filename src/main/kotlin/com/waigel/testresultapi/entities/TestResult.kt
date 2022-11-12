@@ -11,6 +11,8 @@ import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.FetchType
 import javax.persistence.Id
+import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 import javax.persistence.OneToOne
 
 @Entity(name = "test_result")
@@ -25,6 +27,9 @@ class TestResult(
     val testResult: TestResultType = TestResultType.INVALID,
     val testPerformedAt: LocalDateTime = LocalDateTime.now(),
     val testName: String = "",
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    var tenant: Tenant? = null,
 
     @OneToOne(fetch = FetchType.EAGER)
     var personalData: PersonalData,
@@ -45,7 +50,8 @@ class TestResult(
             personalData = personalData,
             cwaTransmissionDetails = cwaTransmissionDetails,
             uploadedDocument = uploadedDocument,
-            testName = testName
+            testName = testName,
+            tenant = tenant,
         )
     }
 
@@ -62,6 +68,7 @@ class TestResult(
                 cwaTransmissionDetails = cwaTransmissionDetails,
                 testName = request.testName,
                 uploadedDocument = null,
+                tenant = tenant,
                 id = UUID.randomUUID()
             )
         }

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
@@ -123,6 +124,7 @@ class CwaTransmissionService(
 
     }
 
+    @Async
     @EventListener(OnTestSubmitted::class)
     fun onTestSubmitted(event: OnTestSubmitted) {
         logger.info("Test ${event.testResult.testId} submitted, check if transmission to cwa is required")

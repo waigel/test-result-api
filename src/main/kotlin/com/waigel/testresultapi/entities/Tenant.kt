@@ -5,6 +5,7 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 import javax.persistence.OneToOne
 
 @Entity(name = "tenant")
@@ -16,6 +17,10 @@ class Tenant(
     val location: TenantLocation,
     @ManyToOne
     val company: TenantCompany,
+
+    @OneToMany(mappedBy = "tenant")
+    val testResults: List<TestResult> = emptyList(),
+
 ) : AuditModel() {
     companion object {
         fun from(tenantCompany: TenantCompany, tenantLocation: TenantLocation): Tenant {

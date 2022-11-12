@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
 
@@ -34,6 +35,7 @@ class PublicDecryptDataController(
         @RequestHeader(Constants.ACCESS_TOKEN_HEADER) accessToken: String,
         @Valid @RequestBody publicDecryptDataRequest: PublicDecryptDataRequest,
         @RequestHeader(Constants.CAPTCHA_TOKEN_HEADER) captchaToken: String,
+        request: HttpServletRequest
     ): PublicDecryptedDataResponseDTO {
         //validate cloudflare captcha
         cfTurnstileService.validateResponse(captchaToken)
@@ -41,7 +43,7 @@ class PublicDecryptDataController(
         logger.info("Decrypt data for test result")
         val decodedPayload = jwtService.validateAccessToken(accessToken)
         logger.info("Decoded payload: $decodedPayload")
-        val res = testResultService.getTestResult(decodedPayload, publicDecryptDataRequest.birthDate)
+        val res = testResultService.getTestResult(decodedPayload, publicDecryptDataRequest.birthDate, request)
         logger.info("Personal data decrypted for test result with id: ${res.id}")
         return PublicDecryptedDataResponseDTO.fromTestResult(res)
     }
@@ -52,12 +54,13 @@ class PublicDecryptDataController(
         @RequestHeader(Constants.ACCESS_TOKEN_HEADER) accessToken: String,
         @Valid @RequestBody publicDecryptDataRequest: PublicDecryptDataRequest,
         response: HttpServletResponse,
+        request: HttpServletRequest
     ): ByteArray {
         logger.info("Decrypt certificate")
         val decodedPayload = jwtService.validateAccessToken(accessToken)
         logger.info("Decoded payload: $decodedPayload")
         response.addHeader("Cache-Control", "max-age=365, must-revalidate, no-transform")
-        return testResultService.getDecryptedCertificate(decodedPayload, publicDecryptDataRequest.birthDate)
+        return testResultService.getDecryptedCertificate(decodedPayload, publicDecryptDataRequest.birthDate, request)
     }
 
 }
