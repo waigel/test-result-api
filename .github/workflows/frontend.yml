@@ -1,4 +1,4 @@
-name: Build
+name: Frontend
 
 on:
   push:
@@ -19,6 +19,6 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - name: Build Docker image
-        run: docker build . -f frontend.Dockerfile --tag testperfect.azurecr.io/testperfect/tra-ui:${SHORT_SHA} --build-arg=GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg=GIT_COMMIT=${SHORT_SHA}
+        run: docker build ./frontend -f frontend.Dockerfile --tag testperfect.azurecr.io/testperfect/tra-ui:${SHORT_SHA} --build-arg=GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg=GIT_COMMIT=${SHORT_SHA}
       - name: Push Docker image
         run: docker push testperfect.azurecr.io/testperfect/tra-ui:${SHORT_SHA}
