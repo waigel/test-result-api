@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError
 import org.springframework.validation.ObjectError
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingRequestHeaderException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -72,11 +73,25 @@ class ExceptionHandlers {
         return ResponseEntity(ErrorResponseBody(Message.ACCESS_CODE_INVALID.code, null), HttpStatus.FORBIDDEN)
     }
 
+    @ExceptionHandler(CaptchaValidationException::class)
+    fun handleCaptchaValidationException(
+        ex: CaptchaValidationException
+    ): ResponseEntity<ErrorResponseBody> {
+        return ResponseEntity(ErrorResponseBody(Message.CAPTCHA_VALIDATION_FAILED.code, null), HttpStatus.FORBIDDEN)
+    }
+
     @ExceptionHandler(FileStoreException::class)
     fun handleFileStorageExceptions(
         ex: FileStoreException
     ): ResponseEntity<ErrorResponseBody> {
         return ResponseEntity(ErrorResponseBody(Message.FILE_STORAGE_NOT_READY.code, null), HttpStatus.BAD_GATEWAY)
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException::class)
+    fun handleMissingRequestHeaderException(
+        ex: MissingRequestHeaderException
+    ): ResponseEntity<ErrorResponseBody> {
+        return ResponseEntity(ErrorResponseBody(Message.MISSING_REQUEST_HEADER.code, null), HttpStatus.BAD_REQUEST)
     }
 
 

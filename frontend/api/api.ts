@@ -3,13 +3,15 @@ import {PublicDecryptedDataResponseDTO} from "./types/PublicDecryptedDataRespons
 
 export const createApiClient = () =>{
     return {
-        getTestResult: async (birthDate: string): Promise<AxiosResponse<PublicDecryptedDataResponseDTO>> => {
+        getTestResult: async (birthDate: string, captcha: string): Promise<AxiosResponse<PublicDecryptedDataResponseDTO>> => {
             return await axios.post(process.env.NEXT_PUBLIC_API_URL + '/api/v1/public/decrypt-data', {
                 birthDate
             }, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Access-Token': localStorage.getItem('accessToken')
+                    'X-Access-Token': localStorage.getItem('accessToken'),
+                    'X-Captcha-Token': captcha
+
                 } as any
 
             })

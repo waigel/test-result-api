@@ -3,6 +3,7 @@ package com.waigel.testresultapi.controllers
 import com.waigel.testresultapi.Constants
 import com.waigel.testresultapi.models.PublicDecryptDataRequest
 import com.waigel.testresultapi.models.PublicDecryptedDataResponseDTO
+import com.waigel.testresultapi.services.CFTurnstileService
 import com.waigel.testresultapi.services.JwtService
 import com.waigel.testresultapi.services.TestResultService
 import io.swagger.v3.oas.annotations.Operation
@@ -21,7 +22,8 @@ import javax.validation.Valid
 @Tag(name = "Public Decrypt Data API", description = "This API is used to decrypt data.")
 class PublicDecryptDataController(
     private val jwtService: JwtService,
-    private val testResultService: TestResultService
+    private val testResultService: TestResultService,
+    private val cfTurnstileService: CFTurnstileService
 ) {
 
     private val logger = LoggerFactory.getLogger(PublicDecryptDataController::class.java)
@@ -30,8 +32,12 @@ class PublicDecryptDataController(
     @Operation(summary = "Decrypt data like certificate and corona-warn-app qr code")
     fun decryptData(
         @RequestHeader(Constants.ACCESS_TOKEN_HEADER) accessToken: String,
-        @Valid @RequestBody publicDecryptDataRequest: PublicDecryptDataRequest
+        @Valid @RequestBody publicDecryptDataRequest: PublicDecryptDataRequest,
+        @RequestHeader(Constants.CAPTCHA_TOKEN_HEADER) captchaToken: String,
     ): PublicDecryptedDataResponseDTO {
+        //validate cloudflare captcha
+        cfTurnstileService.validateResponse(captchaToken)
+
         logger.info("Decrypt data for test result")
         val decodedPayload = jwtService.validateAccessToken(accessToken)
         logger.info("Decoded payload: $decodedPayload")

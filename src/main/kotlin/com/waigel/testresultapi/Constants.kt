@@ -15,5 +15,6 @@ class Constants {
 
         const val TENANT_HEADER = "X-Tenant"
         const val ACCESS_TOKEN_HEADER = "X-Access-Token"
+        const val CAPTCHA_TOKEN_HEADER = "X-Captcha-Token"
     }
 }

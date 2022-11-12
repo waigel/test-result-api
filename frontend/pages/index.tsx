@@ -23,13 +23,15 @@ const Home = () => {
 
     const [accepted, setAccepted] = useState(true);
     const [birthdate, setBirthdate] = useState("");
+    const [captcha, setCaptcha] = useState("");
+    const [resetTimestamp, setResetTimestamp] = useState(0);
 
     const [error, setError] = useState<ErrorObject | undefined>(undefined);
     const [data, setData] = useState<PublicDecryptedDataResponseDTO | undefined>(undefined)
 
     const apiClient = createApiClient()
     const submitForm = () => {
-        apiClient.getTestResult(birthdate).then((result) => {
+        apiClient.getTestResult(birthdate, captcha).then((result) => {
             setData(result.data)
         }).catch((error: AxiosError) => {
             setError({
@@ -37,12 +39,13 @@ const Home = () => {
                 message: error.response?.data.message,
                 statusCode: error.response?.status || 500
             })
+            setResetTimestamp(Date.now())
         })
     }
 
 
     const birthDateForm = () => {
-        return ( <form onSubmit={
+        return (<form onSubmit={
             (e) => {
                 setError(undefined)
                 submitForm();
@@ -58,7 +61,7 @@ const Home = () => {
                 </p>
                 <BirthdateDropdown onChange={(date) => setBirthdate(date)}/>
                 <AcceptCheckbox checked={accepted} onChange={setAccepted}/>
-                <Captcha/>
+                <Captcha onCaptchaValid={setCaptcha} resetTimestamp={resetTimestamp}/>
             </div>
             <button
                 type={"submit"}
