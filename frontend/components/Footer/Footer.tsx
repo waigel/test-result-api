@@ -7,10 +7,10 @@ export const Footer = () => {
     const t = useTranslate();
 
     const frontendVersion = () => {
-        if (process.env.REACT_APP_CF_PAGES_BRANCH) {
+        if (process.env.NEXT_PUBLIC_BRANCH) {
             return `${
-                process.env.REACT_APP_CF_PAGES_BRANCH
-            }/${process.env.REACT_APP_CF_PAGES_COMMIT_SHA?.match(/.{7}/g)?.at(0)}`;
+                process.env.NEXT_PUBLIC_BRANCH
+            }/${process.env.NEXT_PUBLIC_COMMIT_SHA?.match(/.{7}/g)?.at(0)}`;
         }
         return 'dev';
     };
