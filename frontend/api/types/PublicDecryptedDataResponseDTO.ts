@@ -8,5 +8,9 @@ export interface PublicDecryptedDataResponseDTO {
     testPerformedAt: string,
     testName: string,
     testResult: TestResultType,
-    cwaTransmission: CWATransmission
+    cwaTransmission: CWATransmission,
+    cwaAppLink: string,
+    cwaQrCode: string,
+    lucaAppLink: string,
+    lucaQrCode: string,
 }

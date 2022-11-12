@@ -75,6 +75,69 @@ minutes.
 Failing requests are logged and blocked after 5 failed requests for 10 minutes.
 We use Cloudflare recaptcha to ensure, that the requester is a human.
 
+# Corona-Warn-App
+
+This api is connected with a custom developed spring boot api, that interact as proxy between the TRA and the corona-warn-app servers from 
+T-Systems. This cwa-api works really simple, the first step is to register the test.
+The cwa-api also supports the generation of JWT-Tokens for the luca-app.
+For example personal transmission:
+```
+POST /api/v1/register/ HTTP/1.1
+{
+    "fn": "Johannes",
+    "ln": "Waigel",
+    "dob": "2001-01-01",
+    "testId": "675867876879"
+}
+```
+
+or for anonymous transmission:
+```
+POST /api/v1/register/anonym HTTP/1.1
+```
+
+The response from the cwa-api looks like this:
+```
+{
+    "qrCode": "data:image/png;base64,iVBORw0KGgoAAAAN......",
+    "appLink": "https://s.coronawarn.app?v=1#ewogICJ0aW1......",
+    "hash": "051bee3e2acba4112bc87cd5448c7e798fc4022443702ca63dd90d87d574bae7"
+}
+```
+We need to store the `hash` in the TRA database, because we need this for the test result transmission.
+
+Now, we can submit the test result to the cwa-api:
+```
+POST /api/v1/result/ HTTP/1.1
+{
+    "sc": 1638979672,
+    "testResult": "NEGATIVE",
+    "hash": "051bee3e2acba4112bc87cd5448c7e798fc4022443702ca63dd90d87d574bae7",
+    "testIdentifier": 2579
+}
+```
+With the following response:
+```
+{
+    "lucaQrCode": null,
+    "lucaAppLink": null
+}
+```
+If the transmission type is personal, the lucaQrCode and lucaAppLink will be filled with the luca app link and qr code.
+
+#### Authorization
+Normally the cwa-api is only accessible via client certificate authentication. 
+But for the TRA we use a direct unauthorized access, because the TRA is normally hosted in the same private network as the cwa-api.
+So for this wee need to send two special headers:
+
+`ssl-client-verify: SUCCESS`<br/>
+`ssl-client-subject-dn: CN={{CN}},O=Internet Widgits Pty Ltd,ST=Some-State,C=DE`<br/>
+The CN is the common name of the client certificate, you need to use a name that is registered in the cwa-api and
+has an associated billing account.
+
+If you are interested in the cwa-api, please contact us. Mail: johannes@waigel.me
+
+
 # NextJs Frontend
 
 ![image](https://user-images.githubusercontent.com/25115243/201415255-34ee218b-269d-40d6-b4b2-b83dcfe30122.png)

@@ -1,5 +1,6 @@
 package com.waigel.testresultapi.services
 
+import com.waigel.testresultapi.entities.CwaTransmissionDetails
 import com.waigel.testresultapi.entities.PersonalData
 import com.waigel.testresultapi.entities.TestResult
 import com.waigel.testresultapi.events.OnTestSubmitted
@@ -26,7 +27,8 @@ class TestResultService(
     private val testResultRepository: TestResultRepository,
     private val personalDataRepository: PersonalDataRepository,
     private val jwtService: JwtService,
-    private val documentUploadService: DocumentUploadService
+    private val documentUploadService: DocumentUploadService,
+    private val cwaTransmissionService: CwaTransmissionService
 ) {
     private val logger = LoggerFactory.getLogger(TestResultService::class.java)
 
@@ -56,6 +58,7 @@ class TestResultService(
         val encryptionKey = CryptoHelper.generateEncryptionKey()
 
         val personalData = personalDataRepository.save(PersonalData.fromRequest(request.userDetails))
+        val cwaTransmissionDetails = cwaTransmissionService.save(CwaTransmissionDetails.fromRequest(request))
         val copyOfUnencryptedPersonalData = personalData.copy()
 
         CryptoHelper.encryptUserDetails(personalData, encryptionKey)
@@ -63,17 +66,18 @@ class TestResultService(
             TestResult.fromRequest(
                 request,
                 tenant,
-                personalData
+                personalData,
+                cwaTransmissionDetails
             )
         )
-
         //send OnTestSubmitted to trigger PDF generation and cwa transmission if necessary
         applicationEventPublisher.publishEvent(
             OnTestSubmitted(
                 source = this,
                 testResult = testResult.copy(copyOfUnencryptedPersonalData), // replace encrypted personal data with unencrypted personal data
                 tenant = tenant,
-                encryptionKey = encryptionKey
+                encryptionKey = encryptionKey,
+                cwaTransmission = transmissionStatus
             )
         )
 

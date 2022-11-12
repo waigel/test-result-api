@@ -14,7 +14,7 @@ enum class TestResultType {
         get() = when (this) {
             NEGATIVE -> BaseColor(84, 176, 2)
             POSITIVE -> BaseColor(255, 0, 0)
-            INVALID -> BaseColor(255, 255, 255)
+            INVALID -> BaseColor(51, 51, 51)
         }
 
     val displayText: String

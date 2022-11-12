@@ -7,14 +7,13 @@ export interface CaptchaProps {
 }
 
 export const Captcha = ({onCaptchaValid, resetTimestamp}: CaptchaProps) => {
-    const ref = useRef<TurnstileInstance| null>(null)
+    const ref = useRef<TurnstileInstance | null>(null)
 
     useEffect(() => {
-        if(ref.current) {
+        if (ref.current) {
             ref.current?.reset()
         }
     }, [resetTimestamp])
-
 
     return <Turnstile ref={ref} siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_PUBLIC_SITE_KEY}
                       className='static md:fixed bottom-4 right-4 z-50 mx-7 md:mx-0 pt-4'

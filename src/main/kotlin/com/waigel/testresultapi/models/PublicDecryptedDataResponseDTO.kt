@@ -12,7 +12,12 @@ class PublicDecryptedDataResponseDTO(
     val testPerformedAt: LocalDateTime,
     val testName: String,
     val testResult: TestResultType,
-    val cwaTransmission: CWATransmission
+    val cwaTransmission: CWATransmission,
+
+    val cwaAppLink: String?,
+    val cwaQrCode: String?,
+    val lucaAppLink: String?,
+    val lucaQrCode: String?
 ) {
     companion object {
         fun fromTestResult(res: TestResult): PublicDecryptedDataResponseDTO {
@@ -23,7 +28,11 @@ class PublicDecryptedDataResponseDTO(
                 testPerformedAt = res.testPerformedAt,
                 testName = res.testName,
                 testResult = res.testResult,
-                cwaTransmission = res.cwaTransmissionType
+                cwaTransmission = res.cwaTransmissionDetails?.type ?: CWATransmission.NO_TRANSMISSION,
+                cwaAppLink = res.cwaTransmissionDetails?.appLink,
+                cwaQrCode = res.cwaTransmissionDetails?.qrCode,
+                lucaAppLink = res.cwaTransmissionDetails?.lucaAppLink,
+                lucaQrCode = res.cwaTransmissionDetails?.lucaQrCode
             )
         }
 

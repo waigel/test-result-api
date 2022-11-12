@@ -4,6 +4,7 @@ import moment from "moment";
 import {createApiClient} from "../../api/api";
 import {useState} from "react";
 import {TestResultColor} from "../../helpers/TestResultColor";
+import {Anchor} from "@zendeskgarden/react-buttons";
 
 
 export interface CertificateViewProps {
@@ -48,7 +49,8 @@ export const CertificateView = ({data, birthDate}: CertificateViewProps) => {
             }}>CERTIFICATE_EXPIRED_NOTICE</T>
             </p>
 
-            <table className={"table-auto mt-8"}>
+            <div className={"w-full bg-black my-8"} style={{height: "1px"}}/>
+            <table className={"table-auto"}>
                 <tbody>
                 <tr>
                     <td className={"font-bold text-left"}><T>NAME</T></td>
@@ -86,6 +88,24 @@ export const CertificateView = ({data, birthDate}: CertificateViewProps) => {
                 </tr>
                 </tbody>
             </table>
-
+            {(data.cwaQrCode && data.cwaAppLink) && (
+                <>
+                    <div className={"w-full bg-black my-8"} style={{height: "1px"}}/>
+                    <div className={"flex flex-col w-full justify-center text-center"}>
+                        <h2 className="text-xl font-bold">
+                            <T>CWA</T>
+                        </h2>
+                        <p><T>CWA_DESCRIPTION</T></p>
+                        <br/>
+                        <img className={"mx-auto"} width={"230rem"} src={data.cwaQrCode} alt={"CWA QR Code"}/>
+                        <small><T>HINT_APP_LINK_LINE_1</T></small>
+                        <small><T>HINT_APP_LINK_LINE_2</T></small>
+                        <Anchor href={data.cwaAppLink} target={"_blank"} rel="noreferrer">
+                            <T>OPEN_CWA_APP_LINK</T>
+                        </Anchor>
+                    </div>
+                    <div className={"w-full bg-black my-8"} style={{height: "1px"}}/>
+                </>
+            )}
         </div>)
 }

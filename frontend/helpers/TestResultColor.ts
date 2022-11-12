@@ -4,5 +4,5 @@ export const TestResultColor = {
     //red
     POSITIVE: 'red',
     //gray
-    UNKNOWN: 'gray',
+    UNKNOWN: 'darkgray',
 }

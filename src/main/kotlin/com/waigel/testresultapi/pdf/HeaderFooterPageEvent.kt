@@ -10,6 +10,7 @@ import com.itextpdf.text.pdf.ColumnText
 import com.itextpdf.text.pdf.PdfPageEventHelper
 import com.itextpdf.text.pdf.PdfWriter
 import com.waigel.testresultapi.entities.Tenant
+import java.time.format.DateTimeFormatter
 
 class HeaderFooterPageEvent(
     private val tenant: Tenant
@@ -59,7 +60,7 @@ class HeaderFooterPageEvent(
         val fontItalic = Font(font).apply { style = Font.ITALIC }
 
         //generate current date
-        val currentDate = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        val currentDate = java.time.LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 
 
         //document created on
