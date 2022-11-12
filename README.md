@@ -78,5 +78,5 @@ We use Cloudflare recaptcha to ensure, that the requester is a human.
 # NextJs Frontend
 
 ![image](https://user-images.githubusercontent.com/25115243/201415255-34ee218b-269d-40d6-b4b2-b83dcfe30122.png)
-![image](https://user-images.githubusercontent.com/25115243/201444651-aeced876-2080-492f-9d88-41bc31eb0eb3.png)
+![image](https://user-images.githubusercontent.com/25115243/201482242-de516b67-4a2d-422b-a2ff-2e1a2fc41be4.png)
 
