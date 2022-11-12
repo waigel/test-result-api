@@ -42,7 +42,7 @@ jobs:
 
   backend-docker:
     name: Backend docker 🐬
-    needs: [ backend-test ]
+    needs: [ backend-build ]
     runs-on: ubuntu-latest
     steps:
       - name: Add SHORT_SHA env property with commit short sha

@@ -1,8 +1,7 @@
+import {TestResultType} from "../api/types/TestResultType";
+
 export const TestResultColor = {
-    //green
-    NEGATIVE: 'green',
-    //red
-    POSITIVE: 'red',
-    //gray
-    UNKNOWN: 'darkgray',
+    [TestResultType.NEGATIVE]: 'green',
+    [TestResultType.POSITIVE]: 'red',
+    [TestResultType.INVALID]: 'darkgray',
 }

@@ -12,6 +12,7 @@ import {AxiosError} from "axios";
 import {Alert, Title} from "@zendeskgarden/react-notifications";
 import {PublicDecryptedDataResponseDTO} from "../api/types/PublicDecryptedDataResponseDTO";
 import {CertificateView} from "../components/CertificateView/CertificateView";
+import {ApiErrorResponse} from "../api/types/ApiErrorResponse";
 
 interface ErrorObject {
     code: string;
@@ -33,10 +34,10 @@ const Home = () => {
     const submitForm = () => {
         apiClient.getTestResult(birthdate, captcha).then((result) => {
             setData(result.data)
-        }).catch((error: AxiosError) => {
+        }).catch((error: AxiosError<ApiErrorResponse>) => {
             setError({
-                code: error.response?.data.code,
-                message: error.response?.data.message,
+                code: error.response?.data.code || "UNKNOWN",
+                message: error.response?.data.message || "Unknown error",
                 statusCode: error.response?.status || 500
             })
             setResetTimestamp(Date.now())
