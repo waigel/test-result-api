@@ -97,8 +97,8 @@ jobs:
           git_commit_gpgsign: true
       - name: Commit version change
         run: |
-          git add ./projects/dev/api/.version
-          git commit -s -S -m ":rocket: [api] Update version to ${SHORT_SHA}" -m "Co-authored-by: ${{ github.event.pusher.name }} <${{ github.event.pusher.email }}>"
+          git add ./projects/dev/tra-api/.version
+          git commit -s -S -m ":rocket: [tra-api] Update version to ${SHORT_SHA}" -m "Co-authored-by: ${{ github.event.pusher.name }} <${{ github.event.pusher.email }}>"
           git push 
   cleanup:
     name: Cleanup 🧹
