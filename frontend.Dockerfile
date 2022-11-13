@@ -13,11 +13,15 @@ RUN \
   fi
 
 FROM node:16-alpine AS builder
+ARG TOLGEE_DOWNLOAD_API_KEY
+RUN apk add --no-cache curl
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV TOLGEE_DOWNLOAD_API_KEY=${TOLGEE_DOWNLOAD_API_KEY}
+RUN ./scripts/i18n.sh
+RUN ls i18n/
 RUN yarn build
 
 # If using npm comment out above and use below instead
@@ -27,6 +31,9 @@ RUN yarn build
 FROM node:16-alpine AS runner
 MAINTAINER "Johannes Waigel"
 WORKDIR /app
+
+ARG GIT_BRANCH
+ARG GIT_COMMIT
 
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
