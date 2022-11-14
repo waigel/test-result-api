@@ -10,14 +10,15 @@ import {Anchor} from "@zendeskgarden/react-buttons";
 export interface CertificateViewProps {
     data: PublicDecryptedDataResponseDTO;
     birthDate: string;
+    apiBaseUrl: string;
 }
 
-export const CertificateView = ({data, birthDate}: CertificateViewProps) => {
+export const CertificateView = ({data, birthDate, apiBaseUrl}: CertificateViewProps) => {
     const t = useTranslate();
 
     const [loading, setLoading] = useState(false);
 
-    const apiClient = createApiClient()
+    const apiClient = createApiClient(apiBaseUrl)
     const downloadCertificate = () => {
         setLoading(true)
         apiClient.downloadCertificate(birthDate).then((result) => {

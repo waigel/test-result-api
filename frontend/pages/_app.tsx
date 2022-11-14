@@ -2,7 +2,7 @@ import '../styles/globals.css'
 import type {AppProps} from 'next/app'
 import {useRouter} from "next/router";
 import {TolgeeProvider} from "@tolgee/react";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 
 const App = ({Component, pageProps}: AppProps) => {
 

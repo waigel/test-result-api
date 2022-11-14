@@ -1,10 +1,10 @@
 import axios, {AxiosResponse} from "axios";
 import {PublicDecryptedDataResponseDTO} from "./types/PublicDecryptedDataResponseDTO";
 
-export const createApiClient = () =>{
+export const createApiClient = (baseUrl: string) =>{
     return {
         getTestResult: async (birthDate: string, captcha: string): Promise<AxiosResponse<PublicDecryptedDataResponseDTO>> => {
-            return await axios.post(process.env.NEXT_PUBLIC_API_URL + '/api/v1/public/decrypt-data', {
+            return await axios.post(baseUrl + '/api/v1/public/decrypt-data', {
                 birthDate
             }, {
                 headers: {
@@ -17,7 +17,7 @@ export const createApiClient = () =>{
             })
         },
         downloadCertificate(birthDate: String) {
-            return axios.post(process.env.NEXT_PUBLIC_API_URL + '/api/v1/public/decrypt-data/certificate', {
+            return axios.post(baseUrl + '/api/v1/public/decrypt-data/certificate', {
                 birthDate
             }, {
                 headers: {

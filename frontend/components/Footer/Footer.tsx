@@ -1,18 +1,19 @@
 import React from 'react';
 import {Anchor} from '@zendeskgarden/react-buttons';
 import {useTranslate} from "@tolgee/react";
-import getConfig from 'next/config';
 
-export const Footer = () => {
+export interface FooterProps {
+    gitCommit: string,
+    gitBranch: string
+}
+
+export const Footer = ({gitBranch, gitCommit}: FooterProps) => {
     const currentYear = new Date().getFullYear()
     const t = useTranslate();
-    const { publicRuntimeConfig } = getConfig();
 
     const frontendVersion = () => {
-        if (publicRuntimeConfig.gitBranch) {
-            return `${
-                publicRuntimeConfig.gitBranch
-            }/${publicRuntimeConfig.commitHash?.match(/.{7}/g)?.at(0)}`;
+        if (gitBranch) {
+            return `${gitBranch}/${gitCommit?.match(/.{7}/g)?.at(0)}`;
         }
         return 'dev';
     };

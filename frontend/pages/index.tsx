@@ -20,7 +20,14 @@ interface ErrorObject {
     statusCode: number;
 }
 
-const Home = () => {
+interface HomeProps {
+    gitCommit: string,
+    gitBranch: string
+    cfTurnstilePublicSiteKey: string
+    apiBaseUrl: string
+}
+
+const Home = ({gitCommit, gitBranch, apiBaseUrl, cfTurnstilePublicSiteKey}: HomeProps) => {
 
     const [accepted, setAccepted] = useState(true);
     const [birthdate, setBirthdate] = useState("");
@@ -30,7 +37,7 @@ const Home = () => {
     const [error, setError] = useState<ErrorObject | undefined>(undefined);
     const [data, setData] = useState<PublicDecryptedDataResponseDTO | undefined>(undefined)
 
-    const apiClient = createApiClient()
+    const apiClient = createApiClient(apiBaseUrl)
     const submitForm = () => {
         apiClient.getTestResult(birthdate, captcha).then((result) => {
             setData(result.data)
@@ -43,7 +50,6 @@ const Home = () => {
             setResetTimestamp(Date.now())
         })
     }
-
 
     const birthDateForm = () => {
         return (<form onSubmit={
@@ -62,7 +68,7 @@ const Home = () => {
                 </p>
                 <BirthdateDropdown onChange={(date) => setBirthdate(date)}/>
                 <AcceptCheckbox checked={accepted} onChange={setAccepted}/>
-                <Captcha onCaptchaValid={setCaptcha} resetTimestamp={resetTimestamp}/>
+                <Captcha cfTurnstilePublicSiteKey={cfTurnstilePublicSiteKey} onCaptchaValid={setCaptcha} resetTimestamp={resetTimestamp}/>
             </div>
             <button
                 type={"submit"}
@@ -80,7 +86,7 @@ const Home = () => {
                 <link rel="icon" href="/favicon.ico"/>
             </Head>
 
-            <main className={"flex flex-col"} style={ {minHeight: "100vh"}} >
+            <main className={"flex flex-col"} style={{minHeight: "100vh"}}>
                 <Header/>
                 <Container>
                     {error && <Alert className={"mt-8"} type={"error"}>
@@ -88,15 +94,21 @@ const Home = () => {
                         <T>{error.code}</T>
                     </Alert>
                     }
-                    {data ? <CertificateView data={data} birthDate={birthdate}/> : birthDateForm()}
+                    {data ?
+                        <CertificateView data={data} apiBaseUrl={apiBaseUrl} birthDate={birthdate}/> : birthDateForm()}
                 </Container>
-                <Footer/>
+                <Footer gitCommit={gitCommit} gitBranch={gitBranch}/>
             </main>
         </div>
     )
 }
 
 Home.getInitialProps = async () => {
-    return {}
+    return {
+        gitCommit: process.env.GIT_COMMIT || "unknown",
+        gitBranch: process.env.GIT_BRANCH || "unknown",
+        apiBaseUrl: process.env.API_BASE_URL || "http://localhost:8080",
+        cfTurnstilePublicSiteKey: process.env.CLOUDFLARE_TURNSTILE_PUBLIC_SITE_KEY || "unknown"
+    } as HomeProps
 }
 export default Home;
