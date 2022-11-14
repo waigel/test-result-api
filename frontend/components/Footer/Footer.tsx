@@ -1,16 +1,18 @@
 import React from 'react';
 import {Anchor} from '@zendeskgarden/react-buttons';
 import {useTranslate} from "@tolgee/react";
+import getConfig from 'next/config';
 
 export const Footer = () => {
     const currentYear = new Date().getFullYear()
     const t = useTranslate();
+    const { publicRuntimeConfig } = getConfig();
 
     const frontendVersion = () => {
-        if (process.env.NEXT_PUBLIC_BRANCH) {
+        if (publicRuntimeConfig.gitBranch) {
             return `${
-                process.env.NEXT_PUBLIC_BRANCH
-            }/${process.env.NEXT_PUBLIC_COMMIT_SHA?.match(/.{7}/g)?.at(0)}`;
+                publicRuntimeConfig.gitBranch
+            }/${publicRuntimeConfig.commitHash?.match(/.{7}/g)?.at(0)}`;
         }
         return 'dev';
     };
