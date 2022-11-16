@@ -1,6 +1,7 @@
 package com.waigel.testresultapi.exceptions
 
 import com.auth0.jwt.exceptions.JWTDecodeException
+import com.auth0.jwt.exceptions.TokenExpiredException
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -71,6 +72,13 @@ class ExceptionHandlers {
         ex: JWTDecodeException
     ): ResponseEntity<ErrorResponseBody> {
         return ResponseEntity(ErrorResponseBody(Message.ACCESS_CODE_INVALID.code, null), HttpStatus.FORBIDDEN)
+    }
+
+    @ExceptionHandler(TokenExpiredException::class)
+    fun handleJWTTokenExpiredException(
+        ex: TokenExpiredException
+    ): ResponseEntity<ErrorResponseBody> {
+        return ResponseEntity(ErrorResponseBody(Message.ACCESS_CODE_EXPIRED.code, null), HttpStatus.FORBIDDEN)
     }
 
     @ExceptionHandler(CaptchaValidationException::class)
