@@ -7,7 +7,6 @@ class TenantLocationRequest(
     val zipcode: String,
     val city: String,
     val country: String,
-
     val logoUrl: String? = null,
 ) {
 }

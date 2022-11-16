@@ -14,7 +14,7 @@ class Tenant(
     @Column(name = "id", updatable = false, nullable = false)
     var id: UUID = UUID.randomUUID(),
     @OneToOne(cascade = [javax.persistence.CascadeType.MERGE])
-    val location: TenantLocation,
+    var location: TenantLocation,
     @ManyToOne
     val company: TenantCompany,
 

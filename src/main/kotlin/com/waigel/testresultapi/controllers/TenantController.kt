@@ -3,11 +3,13 @@ package com.waigel.testresultapi.controllers
 import com.waigel.testresultapi.Constants
 import com.waigel.testresultapi.entities.Tenant
 import com.waigel.testresultapi.models.CreateTenantRequestDTO
+import com.waigel.testresultapi.models.TenantLocationRequest
 import com.waigel.testresultapi.services.TenantService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -47,6 +49,16 @@ class TenantController(
     fun getTenantByIdAndCompanyId(@PathVariable companyId: UUID, @PathVariable tenantId: UUID): Tenant {
         logger.info("Get tenant by companyId = $companyId and tenantId = $tenantId")
         return tenantService.getByIdAndCompanyId(tenantId, companyId)
+    }
 
+    @PatchMapping(value = ["/{tenantId}"])
+    @Operation(summary = "Update a tenant")
+    fun updateTenant(
+        @PathVariable companyId: UUID,
+        @PathVariable tenantId: UUID,
+        @Valid @RequestBody tenantRequest: TenantLocationRequest
+    ): Tenant {
+        logger.info("Update tenant with id $tenantId")
+        return tenantService.update(tenantId, companyId, tenantRequest)
     }
 }

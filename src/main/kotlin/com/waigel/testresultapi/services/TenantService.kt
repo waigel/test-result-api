@@ -4,6 +4,7 @@ import com.waigel.testresultapi.entities.Tenant
 import com.waigel.testresultapi.exceptions.Message
 import com.waigel.testresultapi.exceptions.NotFoundException
 import com.waigel.testresultapi.models.CreateTenantRequestDTO
+import com.waigel.testresultapi.models.TenantLocationRequest
 import com.waigel.testresultapi.repositories.TenantRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -78,5 +79,12 @@ class TenantService(
                 logger.info("Tenant with id $tenantId not found")
                 throw NotFoundException(Message.RESOURCE_NOT_FOUND)
             }
+    }
+
+    fun update(tenantId: UUID, companyId: UUID, tenantRequest: TenantLocationRequest): Tenant {
+        val tenant = getByIdAndCompanyId(tenantId, companyId)
+        return tenantRepository.save(tenant.apply {
+            location = tenantLocationService.update(tenant.location.id, tenantRequest)
+        })
     }
 }
