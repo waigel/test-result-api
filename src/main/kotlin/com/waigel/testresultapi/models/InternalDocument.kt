@@ -10,6 +10,7 @@ import com.itextpdf.text.Paragraph
 import com.itextpdf.text.pdf.draw.DottedLineSeparator
 import com.waigel.testresultapi.entities.Tenant
 import com.waigel.testresultapi.entities.TestResult
+import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.time.format.DateTimeFormatter
 
@@ -18,7 +19,7 @@ class InternalDocument(
     private val output: ByteArrayOutputStream,
     private val tenant: Tenant
 ) {
-
+    private val logger = LoggerFactory.getLogger(InternalDocument::class.java)
 
     /**
      * Static font sizes
@@ -48,12 +49,17 @@ class InternalDocument(
             /**
              * Add logo, if url ist set on tenant location
              */
-            if (tenant.location.logoUrl != null) {
-                document.add(Image.getInstance(tenant.location.logoUrl).apply {
-                    scaleToFit(150f, 150f)
-                    alignment = Element.ALIGN_CENTER
-                })
+            try {
+                if (tenant.location.logoUrl != null) {
+                    document.add(Image.getInstance(tenant.location.logoUrl).apply {
+                        scaleToFit(150f, 150f)
+                        alignment = Element.ALIGN_CENTER
+                    })
+                }
+            } catch (e: Exception) {
+                logger.info("Could not add logo to pdf, skip build pdf without logo")
             }
+
 
             /**
              * Title with the test result
