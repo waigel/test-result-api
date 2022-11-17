@@ -23,6 +23,7 @@ class PDFGenerator(
         document.addCreator(pdfConfiguration.creatorName)
         document.addTitle("Test Result PDF")
         document.addSubject("Test Result PDF")
+        document.newPage()
 
         val writer = PdfWriter.getInstance(document, output);
         val event = HeaderFooterPageEvent(tenant)
