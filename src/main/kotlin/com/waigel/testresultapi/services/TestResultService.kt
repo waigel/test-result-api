@@ -91,6 +91,7 @@ class TestResultService(
     /**
      * Get test result by id and validate birthdate
      */
+    @Transactional
     fun getTestResult(decodedPayload: JwtPayload, birthdate: LocalDate, request: HttpServletRequest): TestResult {
         val testResult = this.getById(UUID.fromString(decodedPayload.trId))
         val secretKey = CryptoHelper.getSecretKeyFromBase64String(decodedPayload.key)

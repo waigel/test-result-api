@@ -9,6 +9,7 @@ import com.waigel.testresultapi.repositories.TenantRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.UUID
+import javax.transaction.Transactional
 
 @Service
 class TenantService(
@@ -49,6 +50,7 @@ class TenantService(
      * @param companyId The id of the company to which the tenant belongs
      * @return The created tenant
      */
+    @Transactional
     fun create(createTenantRequest: CreateTenantRequestDTO, companyId: UUID): Tenant {
         val tenantCompany = tenantCompanyService.getById(companyId)
         logger.info("Create new tenant, request = $createTenantRequest")
@@ -80,7 +82,7 @@ class TenantService(
                 throw NotFoundException(Message.RESOURCE_NOT_FOUND)
             }
     }
-
+    @Transactional
     fun update(tenantId: UUID, companyId: UUID, tenantRequest: TenantLocationRequest): Tenant {
         val tenant = getByIdAndCompanyId(tenantId, companyId)
         return tenantRepository.save(tenant.apply {
