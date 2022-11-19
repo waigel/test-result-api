@@ -1,5 +1,6 @@
 package com.waigel.testresultapi.entities
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -19,6 +20,7 @@ class Tenant(
     val company: TenantCompany,
 
     @OneToMany(mappedBy = "tenant")
+    @JsonIgnore
     val testResults: List<TestResult> = emptyList(),
 
 ) : AuditModel() {
